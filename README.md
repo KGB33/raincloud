@@ -26,17 +26,17 @@ bar = baz
 The remote git clone url 
  
 ### `branch` 
-Optional -- exclusive with `tag`
+Optional.
 
 ### `tag`
-Optional -- exclusive with `branch`
+Optional.
 
 ### `directory`
 The directory to serve. 
 Defaults to the top level of the git repo.
 
 
-## `[sync]`
+## `[update]`
 
 ### `frequency`
 A cron expression, or the literal "Never". 
@@ -60,7 +60,7 @@ remote = "https://github.com/KGB33/raincloud.git"
 # branch = "main"
 # tag = "v1.2.3"
 
-[sync]
+[update]
 frequency = "0 22 * * 1-5" # https://crontab.guru/#0_22_*_*_1-5
 
 [server]
