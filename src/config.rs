@@ -1,10 +1,20 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
-struct Config {
+pub struct Config {
     repo: Repo,
     update: Update,
     server: Server,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            repo: Repo::default(),
+            update: Update::default(),
+            server: Server::default(),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
@@ -14,15 +24,42 @@ struct Repo {
     tag: String,
 }
 
+impl Default for Repo {
+    fn default() -> Self {
+        Repo {
+            remote: String::default(),
+            branch: String::default(),
+            tag: String::default(),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 struct Update {
     frequency: String,
+}
+
+impl Default for Update {
+    fn default() -> Self {
+        Update {
+            frequency: "@daily".to_string(),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 struct Server {
     port: i64,
     bind_address: String,
+}
+
+impl Default for Server {
+    fn default() -> Self {
+        Server {
+            port: 4750,
+            bind_address: "0.0.0.0".to_string(),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -48,6 +85,17 @@ mod tests {
     }
 
     #[test]
+    fn test_repo_default() {
+        let expected = Repo {
+            remote: String::default(),
+            branch: String::default(),
+            tag: String::default(),
+        };
+        let actual = Repo::default();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn test_update_deserialize() {
         let expected = Update {
             frequency: "0 22 * * 1-5".to_string(),
@@ -56,6 +104,15 @@ mod tests {
             toml::from_str(r#"frequency = "0 22 * * 1-5" # https://crontab.guru/#0_22)*_*_1-5"#)
                 .unwrap();
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_update_default() {
+        let expected = Update {
+            frequency: "@daily".to_string(),
+        };
+        let actual = Update::default();
+        assert_eq!(actual, expected)
     }
 
     #[test]
@@ -71,6 +128,16 @@ mod tests {
             "#,
         )
         .unwrap();
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_server_default() {
+        let expected = Server {
+            port: 4750,
+            bind_address: "0.0.0.0".to_string(),
+        };
+        let actual = Server::default();
         assert_eq!(actual, expected);
     }
 
@@ -106,6 +173,17 @@ mod tests {
                 bind_address: "0.0.0.0".to_string(),
             },
         };
-        assert_eq!(expected, actual);
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_config_default() {
+        let expected = Config {
+            repo: Repo::default(),
+            update: Update::default(),
+            server: Server::default(),
+        };
+        let actual = Config::default();
+        assert_eq!(actual, expected);
     }
 }
