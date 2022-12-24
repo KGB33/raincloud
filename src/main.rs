@@ -1,5 +1,9 @@
 mod config;
+mod git;
+mod server;
 
-fn main() {
-    println!("Hello, world!");
+#[tokio::main]
+async fn main() {
+    pretty_env_logger::init();
+    server::start().await;
 }
