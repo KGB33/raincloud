@@ -1,7 +1,7 @@
+mod cli;
 mod config;
 mod git;
 mod server;
-mod cli;
 
 #[tokio::main]
 async fn main() {

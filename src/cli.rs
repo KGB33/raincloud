@@ -1,34 +1,28 @@
-use clap::{Parser, command, Subcommand};
+use clap::{command, Parser, Subcommand};
+
+use crate::{
+    config::Config,
+    server::{handle_local, handle_remote},
+};
 
 #[derive(Parser)]
 #[command(name = "raincloud")]
 struct Cli {
     #[command(subcommand)]
-    command: Commands
+    command: Commands,
 }
 
 #[derive(Subcommand)]
 enum Commands {
-    Remote,
-    Local,
+    Remote { url: String },
+    Local { path: String },
 }
-
-#[derive(Debug)]
-struct Remote {
-    url: String,
-}
-
-#[derive(Debug)]
-struct Local {
-    path: String
-}
-
-
 pub async fn entrypoint() {
     let cli = Cli::parse();
+    let cfg = Config::default();
 
     match &cli.command {
-        Commands::Remote => todo!(),
-        Commands::Local => todo!(),
+        Commands::Remote { url } => handle_remote(cfg).await,
+        Commands::Local { path } => handle_local(cfg).await,
     }
 }
