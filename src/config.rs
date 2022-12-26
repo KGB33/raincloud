@@ -1,15 +1,18 @@
 use serde::Deserialize;
+use std::env;
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
 pub struct Config {
-    repo: Repo,
-    update: Update,
-    server: Server,
+    pub directory: String,
+    pub repo: Repo,
+    pub update: Update,
+    pub server: Server,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Config {
+            directory: default_dir(),
             repo: Repo::default(),
             update: Update::default(),
             server: Server::default(),
@@ -18,10 +21,10 @@ impl Default for Config {
 }
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
-struct Repo {
-    remote: String,
-    branch: String,
-    tag: String,
+pub struct Repo {
+    pub remote: String,
+    pub branch: String,
+    pub tag: String,
 }
 
 impl Default for Repo {
@@ -35,8 +38,8 @@ impl Default for Repo {
 }
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
-struct Update {
-    frequency: String,
+pub struct Update {
+    pub frequency: String,
 }
 
 impl Default for Update {
@@ -48,9 +51,9 @@ impl Default for Update {
 }
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]
-struct Server {
-    port: i64,
-    bind_address: String,
+pub struct Server {
+    pub port: i64,
+    pub bind_address: String,
 }
 
 impl Default for Server {
@@ -59,6 +62,13 @@ impl Default for Server {
             port: 4750,
             bind_address: "0.0.0.0".to_string(),
         }
+    }
+}
+
+fn default_dir() -> String {
+    match env::var("XDG_CACHE_HOME") {
+        Ok(val) => format!("{}/raincloud/", val),
+        Err(_) => ".".to_string(),
     }
 }
 
@@ -145,6 +155,7 @@ mod tests {
     fn test_config_deserialize() {
         let actual: Config = toml::from_str(
             r#"
+            directory = "/foo/bar/baz"
             [repo]
             remote = "https://github.com/KGB33/raincloud.git"
             branch = "main"
@@ -160,6 +171,7 @@ mod tests {
         )
         .unwrap();
         let expected = Config {
+            directory: "/foo/bar/baz".to_string(),
             repo: Repo {
                 remote: "https://github.com/KGB33/raincloud.git".to_string(),
                 branch: "main".to_string(),
@@ -179,6 +191,7 @@ mod tests {
     #[test]
     fn test_config_default() {
         let expected = Config {
+            directory: default_dir(),
             repo: Repo::default(),
             update: Update::default(),
             server: Server::default(),
