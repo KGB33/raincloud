@@ -20,21 +20,11 @@ impl Default for Config {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Deserialize, PartialEq, Eq, Default)]
 pub struct Repo {
     pub remote: String,
     pub branch: String,
     pub tag: String,
-}
-
-impl Default for Repo {
-    fn default() -> Self {
-        Repo {
-            remote: String::default(),
-            branch: String::default(),
-            tag: String::default(),
-        }
-    }
 }
 
 #[derive(Debug, Deserialize, PartialEq, Eq)]

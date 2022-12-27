@@ -1,11 +1,15 @@
-use std::{
-    net::{IpAddr, SocketAddr},
-    str::FromStr,
-};
+use std::{net::SocketAddr, str::FromStr};
 
-use crate::config::Config;
+use crate::{config::Config, git::clone};
 
-pub async fn handle_remote(cfg: Config) {}
+pub async fn handle_remote(mut cfg: Config) {
+    let clone_dir = match clone(&cfg) {
+        Ok(val) => val,
+        Err(err) => panic!("{}", err),
+    };
+    cfg.directory += &clone_dir;
+    return start(cfg).await;
+}
 pub async fn handle_local(cfg: Config) {
     return start(cfg).await;
 }
@@ -16,7 +20,7 @@ async fn start(cfg: Config) {
             Ok(val) => val,
             Err(_) => panic!("Could not parse bind_address!"),
         };
-    println!("Serving {} on {}", cfg.directory, bind_address);
+    println!("Serving {} on {}", &cfg.directory, bind_address);
     warp::serve(warp::fs::dir(cfg.directory))
         .run(bind_address)
         .await;

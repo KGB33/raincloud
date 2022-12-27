@@ -19,10 +19,16 @@ enum Commands {
 }
 pub async fn entrypoint() {
     let cli = Cli::parse();
-    let cfg = Config::default();
+    let mut cfg = Config::default();
 
     match &cli.command {
-        Commands::Remote { url } => handle_remote(cfg).await,
-        Commands::Local { path } => handle_local(cfg).await,
+        Commands::Remote { url } => {
+            cfg.repo.remote = url.to_string();
+            handle_remote(cfg).await;
+        }
+        Commands::Local { path } => {
+            cfg.directory = path.to_string();
+            handle_local(cfg).await;
+        }
     }
 }
