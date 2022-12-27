@@ -16,7 +16,7 @@ is the same as:
 
 ```toml
 [foo]
-bar = baz
+bar = "baz"
 ```
 
 ## `[repo]`
